@@ -1,0 +1,49 @@
+##| count in 4 beats
+8.times do
+  sample :drum_cymbal_pedal
+  sleep 0.5
+end
+
+##| record loop - starts immediately after counting in
+with_fx :record, buffer: buffer(:foo) do
+  with_fx :reverb do
+    live_audio :guitarz, input: 2
+  end
+end
+
+##| basic beat - starts immediately after counting in
+with_fx :level, amp: 0.6 do
+  live_loop :beatz do
+    sample :bd_boom
+    sleep 1
+    sample :drum_snare_soft
+    sleep 1
+  end
+  
+  live_loop :hatz do
+    sample :drum_cymbal_soft, beat_stretch: 1
+    16.times do
+      sample :drum_cymbal_closed
+      sleep 0.5
+    end
+  end
+end
+
+##| playback loop - starts immediately after recording
+live_loop :bar do
+  with_fx :reverb do
+    sample buffer(:foo), amp: 3
+    sleep 8
+  end
+end
+
+##| end previous live_audio - ends immediately after recording
+sleep 8
+live_audio :guitarz, :stop
+
+##| begin new live_audio to play/solo over loop
+with_fx :krush, amp: 0.5 do
+  with_fx :reverb do
+    live_audio :guitarz2, input: 2
+  end
+end
